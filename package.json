@@ -1,6 +1,6 @@
 {
   "name": "groupby-json",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Group JSON objects by attributes",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.10"
   },
   "scripts": {
     "build": "tsc",
@@ -26,6 +26,6 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pedroentringer/json2xml" 
-   }
+    "url": "git+https://github.com/pedroentringer/groupby-json"
+  }
 }

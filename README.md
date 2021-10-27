@@ -2,7 +2,7 @@
 
 Javascript helper for json object grouping for multiple properties
 
-![npm](https://img.shields.io/npm/v/groupby-json?color=green&style=flat-square) ![NPM](https://img.shields.io/npm/l/groupby-json) ![GitHub issues](https://img.shields.io/github/issues/groupby-json) ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/groupby-json)
+![npm](https://img.shields.io/npm/v/groupby-json?color=green&style=flat-square) ![NPM](https://img.shields.io/npm/l/groupby-json) ![GitHub issues](https://img.shields.io/github/issues/pedroentringer/groupby-json) ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/groupby-json)
 
 ## Installation
 
@@ -11,6 +11,8 @@ Install with npm or yarn
 ```
 npm install groupby-json
 ```
+
+or
 
 ```
 yarn add groupby-json
