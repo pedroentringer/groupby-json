@@ -1,56 +1,63 @@
-interface TagGroupBy {
-  tag: string
-  childName: string
+interface TagGroupBy<T> {
+  tag: keyof T;
+  childName: string;
 }
 
-interface DynamicObject {
-  [key: string]: any
-}
+type BuildGroupedType<T, Tags extends readonly TagGroupBy<T>[]> = Tags extends readonly [infer First, ...infer Rest]
+  ? First extends TagGroupBy<T>
+    ? Rest extends readonly TagGroupBy<T>[]
+      ? Array<Pick<T, First['tag']> & Record<First['childName'], BuildGroupedType<T, Rest>>>
+      : never
+    : never
+  : T[];
 
-export const groupBy = ( array:Array<any>, tagsToGroup:Array<TagGroupBy> ) => {
+export function groupBy<T extends Record<PropertyKey, any>, const Tags extends readonly TagGroupBy<T>[]>(
+  array: Array<T>,
+  tagsToGroup: Tags,
+): BuildGroupedType<T, Tags> {
+  let result: any = [];
 
-  let result:any = []
-
-  const existInArray = (array:Array<any>, key:string, target: any) => {
-    for(let i=0; i<array.length; i++){
-      const element = array[i]
-      if(element[key] === target) return {exist: true, index: i};
+  const existInArray = (array: Array<T>, key: keyof T, target: T[keyof T]) => {
+    for (let i = 0; i < array.length; i++) {
+      const element = array[i];
+      if (element[key] === target) return { exist: true, index: i };
     }
 
-    return {exist: false, index: -1};
-  }
+    return { exist: false, index: -1 };
+  };
 
-  const group = (array:Array<any>, element: DynamicObject, tagsToGroup:Array<TagGroupBy>) => {
-    if(!tagsToGroup || tagsToGroup.length === 0) {
-      array.push(element)
+  const group = (array: Array<T>, element: T, tagsToGroup: readonly TagGroupBy<T>[]) => {
+    if (!tagsToGroup || tagsToGroup.length === 0) {
+      array.push(element);
       return array;
     }
-    
-    const tempTags = [...tagsToGroup]
 
-    const targetTag = tempTags.shift() as TagGroupBy
+    const tempTags = [...tagsToGroup];
 
-    const {exist, index} = existInArray(array, targetTag.tag, element[targetTag.tag])
+    const targetTag = tempTags.shift() as TagGroupBy<T>;
 
-    if(!exist){
-      let insert:DynamicObject = {}
-      
-      insert[targetTag.tag] = element[targetTag.tag]
-      insert[targetTag.childName] = []
+    const { exist, index } = existInArray(array, targetTag.tag, element[targetTag.tag]);
 
-      array.push(insert)
+    if (!exist) {
+      const insert = {} as Record<PropertyKey, any>;
+
+      insert[targetTag.tag] = element[targetTag.tag];
+      insert[targetTag.childName] = [];
+
+      array.push(insert as T);
     }
 
-    const indexToManipulate = exist ? index : array.length - 1
+    const indexToManipulate = exist ? index : array.length - 1;
 
-    array[indexToManipulate][targetTag.childName] = group(array[indexToManipulate][targetTag.childName], element, tempTags)
+    const targetObject = array[indexToManipulate] as Record<PropertyKey, any>;
+    targetObject[targetTag.childName] = group(targetObject[targetTag.childName], element, tempTags);
 
-    return array
+    return array;
+  };
+
+  for (const element of array) {
+    result = group(result, element, tagsToGroup);
   }
 
-  for(const element of array){
-    result = group(result, element, tagsToGroup)
-  }
-
-  return result
+  return result as BuildGroupedType<T, Tags>;
 }
